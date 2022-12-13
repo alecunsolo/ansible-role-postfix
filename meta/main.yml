@@ -1,0 +1,23 @@
+---
+galaxy_info:
+  author: Alessandro Cunsolo
+  namespace: alecunsolo
+  description: Role to install postfix
+  license: MIT
+  role_name: postfix
+
+  min_ansible_version: '2.8'
+
+  platforms:
+  - name: Ubuntu
+    versions:
+    - all
+  - name: Debian
+    versions:
+    - all
+  - name: EL
+    versions:
+    - all
+
+  galaxy_tags: []
+dependencies: []
