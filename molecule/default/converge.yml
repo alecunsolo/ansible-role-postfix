@@ -1,6 +1,17 @@
 ---
 - name: Converge
   hosts: all
+  vars:
+    postfix_remote_host: a.remote.host
+    postfix_remote_port: 587
+    postfix_remote_user: username
+    postfix_remote_password: password
+  pre_tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      when: ansible_os_family | lower == 'debian'
   tasks:
     - name: Include postfix.
       ansible.builtin.include_role:

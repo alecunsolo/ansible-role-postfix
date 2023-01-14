@@ -1,2 +1,41 @@
 ---
-# tasks file for postfix
+- name: Read disto specific variables.
+  ansible.builtin.include_vars: vars/{{ ansible_os_family | lower }}.yml
+
+- name: Ensure needed packages are installed.
+  ansible.builtin.package:
+    name: '{{ mail_packages }}'
+    state: present
+
+- name: Ensure sasl directory exists.
+  ansible.builtin.file:
+    path: /etc/postfix/sasl
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Add plaintext authentication file.
+  ansible.builtin.copy:
+    dest: /etc/postfix/sasl/sasl_passwd
+    content: |-
+      [{{ postfix_remote_host }}]:{{ postfix_remote_port }}      {{ postfix_remote_user }}:{{ postfix_remote_password }}
+    owner: root
+    group: root
+    mode: '0600'
+  notify: Process credentials.
+
+- name: Configure postfix.
+  ansible.builtin.lineinfile:
+    path: /etc/postfix/main.cf
+    line: '{{ item.name }} = {{ item.value }}'
+    regexp: ^{{ item.name }}[ ]?=
+    mode: 0644
+  loop: '{{ postfix_config }}'
+  notify: Restart postfix
+
+- name: Ensure postfix service is started and enabled.
+  ansible.builtin.service:
+    name: postfix
+    state: started
+    enabled: true

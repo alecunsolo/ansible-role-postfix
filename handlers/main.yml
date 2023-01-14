@@ -1,2 +1,9 @@
 ---
-# handlers file for postfix
+- name: Process credentials.
+  ansible.builtin.command:
+    cmd: postmap /etc/postfix/sasl/sasl_passwd
+
+- name: Restart postfix
+  ansible.builtin.service:
+    name: postfix
+    state: restarted

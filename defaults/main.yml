@@ -1,2 +1,16 @@
 ---
-# defaults file for postfix
+postfix_config:
+  - name: relayhost
+    value: '[{{ postfix_remote_host }}]:{{ postfix_remote_port }}'
+  - name: smtp_use_tls
+    value: 'yes'
+  - name: smtp_sasl_auth_enable
+    value: 'yes'
+  - name: smtp_sasl_security_options
+    value:
+  - name: smtp_sasl_password_maps
+    value: hash:/etc/postfix/sasl/sasl_passwd
+  - name: inet_interfaces
+    value: localhost
+  - name: inet_protocols
+    value: ipv4
