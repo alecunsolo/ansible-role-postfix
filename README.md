@@ -1,31 +1,75 @@
 Ansible Role: postfix
 =========
 
-A brief description of the role goes here.
+This role install `postfix` and configure it to use a remote mail relay.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+To send mails you need access to a remote mail relay (such as Gmail).
 
 Role Variables
 --------------
+```yaml
+postfix_remote_host: a.remote.host  # smtp.gmail.com
+postfix_remote_port: 587
+postfix_remote_user: username  # your.username@gmail.com
+postfix_remote_password: password  # application password if 2FA is enabled
+```
+These are the variables used to establish a connection with the remote relay server and must be provided in the playbook.
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+```yaml
+postfix_config:
+  - name: relayhost
+    value: '[{{ postfix_remote_host }}]:{{ postfix_remote_port }}'
+  - name: smtp_use_tls
+    value: 'yes'
+  - name: smtp_sasl_auth_enable
+    value: 'yes'
+  - name: smtp_sasl_security_options
+    value:
+  - name: smtp_sasl_password_maps
+    value: hash:/etc/postfix/sasl/sasl_passwd
+  - name: inet_interfaces
+    value: localhost
+  - name: inet_protocols
+    value: ipv4
+```
+This is an array with the needed configuration options to add to the `/etc/postfix/main.cf` file.
+
+```yaml
+mail_packages:
+  # Debian
+  - postfix
+  - libsasl2-modules
+  - mailutils
+  # RedHat
+  - postfix
+  - cyrus-sasl
+  - cyrus-sasl-plain
+  - s-nail
+```
+List of the needed packages.
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+None.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+- name: Postfix
+  hosts: all
+  vars:
+    postfix_remote_host: a.remote.host
+    postfix_remote_port: 587
+    postfix_remote_user: username
+    postfix_remote_password: password
+  roles:
+    - alecunsolo.postfix
+```
 
 License
 -------
