@@ -2,6 +2,7 @@
 - name: Process credentials.
   ansible.builtin.command:
     cmd: postmap /etc/postfix/sasl/sasl_passwd
+  changed_when: false
 
 - name: Restart postfix
   ansible.builtin.service:
