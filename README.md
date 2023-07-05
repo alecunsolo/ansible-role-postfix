@@ -3,7 +3,10 @@
 
 Ansible Role: postfix
 =========
+## DISCLAIMER
+After [this](https://www.redhat.com/en/blog/furthering-evolution-centos-stream) announcement I will not test on RHEL anymore.
 
+---------
 This role install `postfix` and configure it to use a remote mail relay.
 
 Requirements
